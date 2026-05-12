@@ -27,8 +27,7 @@ box-sizing:border-box;
 
 body{
 font-family:'Inter',sans-serif;
-background:
-linear-gradient(135deg,#07152f,#0b1d46,#10285e);
+background:linear-gradient(135deg,#07152f,#0b1d46,#10285e);
 min-height:100vh;
 padding:20px;
 color:white;
@@ -221,8 +220,8 @@ word-break:break-word;
 </div>
 
 <div class="badge">
-<i class="fa-solid fa-folder-open"></i>
- Google Drive conectado
+<i class="fa-solid fa-cloud"></i>
+ Google Drive Online
 </div>
 
 </div>
@@ -305,7 +304,7 @@ Nenhum nome gerado.
 
 <h2>
 <i class="fa-solid fa-file-lines"></i>
- Texto Extraído OCR
+ Texto OCR
 </h2>
 
 <textarea id="textoOCR"></textarea>
@@ -334,8 +333,6 @@ document.getElementById('progressBar');
 
 const statusText =
 document.getElementById('status');
-
-let textoExtraidoGlobal = '';
 
 arquivoInput.addEventListener(
 'change',
@@ -366,8 +363,6 @@ texto = await lerPDF(file);
 texto = await lerImagem(file);
 
 }
-
-textoExtraidoGlobal = texto;
 
 document.getElementById('textoOCR').value =
 texto;
@@ -513,12 +508,11 @@ base64:base64
 
 };
 
-const resposta = await fetch(
+await fetch(
 'https://script.google.com/macros/s/AKfycbxl07WB8rDuPAxWcuY2j4GIrfdQTG8rQ_CR-vRLuy-lrU1c7M6D8dS5HmQwBS4YOctG1Q/exec',
 {
 method:'POST',
-mode:'cors',
-redirect:'follow',
+mode:'no-cors',
 headers:{
 'Content-Type':'text/plain;charset=utf-8'
 },
@@ -526,58 +520,18 @@ body: JSON.stringify(dados)
 }
 );
 
-if(!resposta.ok){
-
-throw new Error(
-'Erro HTTP: '+resposta.status
-);
-
-}
-
-const texto =
-await resposta.text();
-
-console.log('Resposta API:', texto);
-
-let resultado;
-
-try{
-
-resultado = JSON.parse(texto);
-
-}catch(e){
-
-throw new Error(
-'Resposta inválida do servidor'
-);
-
-}
-
-if(resultado.status === 'sucesso'){
-
 progressBar.style.width = '100%';
 
 statusText.innerText =
 'Arquivo enviado com sucesso';
 
 alert(
-'Arquivo enviado com sucesso!\n\n'+
-'Arquivo: '+resultado.arquivo+
-'\n\n'+
-'Link:\n'+resultado.url
+'Arquivo enviado para o Google Drive com sucesso!'
 );
-
-}else{
-
-throw new Error(
-resultado.mensagem || 'Erro desconhecido'
-);
-
-}
 
 }catch(erro){
 
-console.error('ERRO:', erro);
+console.error(erro);
 
 statusText.innerText =
 'Falha na integração';
